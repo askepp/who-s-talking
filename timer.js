@@ -394,7 +394,7 @@ $(function() {
 	// });
 });
 
-$(document).on("click touchstart", ".stopwatch-link", function(e) {
+$(document).on("click", ".stopwatch-link", function(e) {
 	e.preventDefault();
 
 	// stop();
@@ -426,7 +426,7 @@ $(document).on("click touchstart", ".stopwatch-link", function(e) {
 // });
 
 var editingElement = null;
-$(document).on('mousedown touchstart', '.stopwatch-link', function(e) {
+$(document).on('mousedown', '.stopwatch-link', function(e) {
 	e.preventDefault();
 
 	editTimeout = setTimeout(showEditDialog, 1000);
