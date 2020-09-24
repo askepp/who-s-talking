@@ -1,8 +1,7 @@
 var editTimeout = 0;
-var instances = [];
+var instances = {};
 var instance_count = 0;
 var timer_id = 0;
-var total_timers = 10;
 
 var Stopwatch = function(elem, options) {
 	var timer = createTimer(),
@@ -148,7 +147,7 @@ var Stopwatch = function(elem, options) {
 
 		// TOTAL TIMER
 		var total_clock = 0;
-		$.each(instances, function(i, instance){
+		$.each(instances, function(key, instance){
 			var timer_array = instance.elem.find('.timel').text().split(':');
 
 			var i_hours = 0;
@@ -317,7 +316,7 @@ function prepCSVRow(arr, columnCount, initial) {
 
 function add_ins(element) {
 	var instance = new Stopwatch( element );
-	instances.push(instance);
+	instances[instance_count] = instance;
 
 	element.attr('data-instance', instance_count);
 	instance_count++;
@@ -344,12 +343,10 @@ function create_ins() {
 
 	// $('#timers').sortable('refresh')
 
-	if(instance_count >= 10) {
+	if(Object.keys(instances).length >= 10) {
 		$('.stopwatch-new').hide();
 		return;
 	}
-
-	total_timers++;
 }
 
 
@@ -401,7 +398,7 @@ $(document).on("click touchstart", ".stopwatch-link", function(e) {
 	e.preventDefault();
 
 	// stop();
-	$.each(instances, function(i, instance){
+	$.each(instances, function(key, instance){
 		instance.stop();
 	});
 
@@ -460,6 +457,18 @@ $(document).on("click", "#reset_timer_btn", function() {
 
 	editingElement.removeClass("green");
 	instance.reset();
+	$('#editNameModel').modal('hide');
+});
+
+$(document).on('click', '#remove_timer_btn', function () {
+	var instance_id = editingElement.attr('data-instance');
+	delete instances[instance_id];
+	
+	if(Object.keys(instances).length < 10) {
+		$('.stopwatch-new').show();
+	}
+
+	$(editingElement).remove();
 	$('#editNameModel').modal('hide');
 });
 
