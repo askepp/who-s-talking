@@ -83,6 +83,13 @@ align: center;
   text-rendering: optimizeLegibility;
   margin-bottom: 2.1rem;
 }
+.modal-footer {
+    padding: 15px 5px;
+}
+.modal-footer button {
+  font-size: 12px;
+}
+
 .stopwatch, .stopwatch-new {
     display: inline-block;
     background-color: #fca900;
