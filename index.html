@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+   <head>
+
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145307319-3"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-145307319-3');
+      </script>
+
+   
+      <title>Who's Talking?</title>
+      <meta name="viewport" content= "width=device-width, initial-scale=1.0"> 
+      <!-- CSS -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+      <link rel="stylesheet" href="css/timer.css">
+      <link rel="stylesheet" href="css/base.css">
+      <script src="https://kit.fontawesome.com/2b91979f9a.js"></script>
+
+      <!-- JS -->
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.2/jquery.ui.touch-punch.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   
+      <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+      <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+       <!-- Open Graph-->
+     <!--<meta property="og:url" content="http://www.tuffanamn.com/" />-->
+     <meta name="og:site_name" content="Who's talking?">
+     <meta property="og:title" content="A discussion timer for coaches and others" />
+     <meta property="og:description" content="Who's Talking helps you to track time spent in conversations and visualizing it through exporting the data.">
+     <meta property="og:image" content="http://www.tuffanamn.com/images/opengraph_1200x630.png" />
+      <meta property="og:image:width" content="1200">
+     <meta property="og:image:height" content="630">
+     <meta property="og:image:type" content="image/png" />
+
+   </head>
+   <body>
+         <div class="plus action-btn">
+            <span id="refresh"><i class="fas fa-plus-square"></i></span>
+         </div>
+
+         <div class="quest action-btn">
+            <span id="help"><i class="fas fa-info-circle"></i></span>
+         </div>
+
+         <div class="download action-btn">
+            <span id="doExport"><i class="fas fa-file-download"></i></span>
+         </div>
+
+         <div class="timer-container">
+            <div class="content">
+               <h1 class="time-total draggable"></h1>
+            </div>
+    
+            <div id="timers">
+               <div class="basic stopwatch draggable"></div>
+               <div class="stopwatch-new" onclick="create_ins();">
+                  <span>+ <br>New</span>
+               </div>
+               <div class="export" style="display: none;">
+                  <table class="sl" >
+                     <tr>
+                        <th>Timer Name</th>
+                        <th>Timer Active</th>
+                     </tr>
+                     <tr>
+                        <td>row1 Col1</td>
+                        <td>row1 Col2</td>
+                     </tr>
+                  </table>
+               </div>
+            </div>
+         </div>
+
+         <!-- Edit Name Model -->
+         <div class="modal fade" id="editNameModel" role="dialog">
+            <div class="modal-dialog">
+               <!-- Modal content-->
+               <div class="modal-content">
+                  <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times-circle"></i></button>
+                     <h4 class="modal-title">Timer Settings</h4>
+                  </div>
+                  <div class="modal-body">
+                     <div class="form-group">
+                         <label>Timer Name</label>
+                         <input type="text" name="timer_name" id="timer_name_input" class="form-control" maxlength="15">
+                         <span class="timer_name_input_error">Please enter a name</span>
+                     </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" id="change_timer_name" class="btn btn-primary">Update Name</button>
+                      <button type="button" id="reset_timer_btn" class="btn btn-warning">Reset Timer</button>
+                       <button type="button" id="reset_timer_btn" class="btn btn-danger">Remove Timer</button>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         <!-- Help Model -->
+         <div class="modal fade" id="helpModel" role="dialog">
+            <div class="modal-dialog">
+               <!-- Modal content-->
+               <div class="modal-content">
+                  <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal">&times;</button>
+                     <h4 class="modal-title">Who's Talking?</h4>
+                  </div>
+                  <div class="modal-body">
+                     <p>Who's Talking (beta) helps you to track time spent in conversations and visualizing it through exporting the data.</p>
+                      <p>I made this app out of curiosity and personal needs to figure out if a subjective tool and real-life data can better help us reflect on where time is spent (and not spent). And in some cases a showing a pie-chart speaks louder than words ;)</p>
+                      <p>I'm Alexander Skepp and I'm an Agile Coach. Feedback on improvements and how you are using this tool is highly appreciated: <a href="mailto:webmaster@alphagoogle.com" target="_blank">webmaster@alphagoogle.com</a></p>
+                      <p>Thanks,<br>
+                      Alex<br>
+                     </p>
+                     <p><i>Ps. Press and hold to rename a timer and press and drag to move timers around on the screen.</i></p>
+                  </div>
+                  <!-- <div class="modal-footer">
+                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div> -->
+               </div>
+            </div>
+         </div>
+
+         <!-- Refresh Model -->
+         <div class="modal fade" id="refreshModel" role="dialog">
+            <div class="modal-dialog">
+               <!-- Modal content-->
+               <div class="modal-content">
+                  <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal">&times;</button>
+                     <h4 class="modal-title">Start New Project</h4>
+                  </div>
+                  <div class="modal-body">
+                     <p>Do you really want to start a new project?</p>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-primary" id="dorefresh">Yes</button>
+                     <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+      <script type="text/javascript" src="timer.js?asdasdad"></script>
+   </body>
+</html>
