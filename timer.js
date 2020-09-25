@@ -144,7 +144,7 @@ var Stopwatch = function(name, elem, options) {
 		
 		var timer_str = minutes + ":" + seconds;
 		if (hours) {
-			timer_str = hours + ":" + time_str;
+			timer_str = hours + ":" + timer_str;
 		}
 
 		timer.innerHTML = timer_str;
@@ -193,7 +193,7 @@ var Stopwatch = function(name, elem, options) {
 		
 		var timer_str_total = minutes + ":" + seconds;
 		if(hours) {
-			timer_str_total = hours + ":" + time_str;
+			timer_str_total = hours + ":" + timer_str_total;
 		}
 
 		var oldValue = $('h1').html();
