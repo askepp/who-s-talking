@@ -2,8 +2,12 @@ var editTimeout = 0;
 var instances = {};
 var instance_count = 0;
 var timer_id = 0;
+var editingElement = null;
 
-var Stopwatch = function(elem, options) {
+
+var Stopwatch = function(name, elem, options) {
+	this.name = name;
+
 	var timer = createTimer(),
 		nms = createname(),
 		elemChilds = createElements(),
@@ -15,7 +19,7 @@ var Stopwatch = function(elem, options) {
 		interval;
 	// default options
 	options = options || {};
-	options.delay = options.delay || 1;
+	options.delay = options.delay || 10;
 	// append elements   
 	//elem.append(nms);
 	elem.append(elemChilds);
@@ -139,7 +143,7 @@ var Stopwatch = function(elem, options) {
 		}
 		
 		var timer_str = minutes + ":" + seconds;
-		if(hours) {
+		if (hours) {
 			timer_str = hours + ":" + time_str;
 		}
 
@@ -192,7 +196,10 @@ var Stopwatch = function(elem, options) {
 			timer_str_total = hours + ":" + time_str;
 		}
 
-		$('h1').html(timer_str_total);
+		var oldValue = $('h1').html();
+		if (oldValue !== timer_str_total) {
+			$('h1').html(timer_str_total);
+		}
 	}
 
 	function delta() {
@@ -244,29 +251,12 @@ function exportCSV(table) {
   var CSVString = prepCSVRow(titles, titles.length, '');
   CSVString = prepCSVRow(data, titles.length, CSVString);
 
-  /*
-   * Make CSV downloadable
-   */
-	var currentdate = new Date(); 
-	var fileName = currentdate.getFullYear() + ""
-	+ mapTwoDigits(currentdate.getMonth()+1)  + "" 
-	+ mapTwoDigits(currentdate.getDate()) + "-"  
-	+ mapTwoDigits(currentdate.getHours()) + ""  
-	+ mapTwoDigits(currentdate.getMinutes()) + "" 
-	+ mapTwoDigits(currentdate.getSeconds());
-
   var downloadLink = document.createElement("a");
   var blob = new Blob(["\ufeff", CSVString]);
   var url = URL.createObjectURL(blob);
-  downloadLink.href = url;
-  downloadLink.download = fileName + ".csv";
 
-  /*
-   * Actually download CSV
-   */
-  document.body.appendChild(downloadLink);
-  downloadLink.click();
-  document.body.removeChild(downloadLink);
+  // do the download
+  download(url, 'csv');
 }
 /*
 * Convert data array to CSV string
@@ -315,7 +305,8 @@ function prepCSVRow(arr, columnCount, initial) {
 }
 
 function add_ins(element) {
-	var instance = new Stopwatch( element );
+	var name = 'Timer ' + (instance_count + 1);
+	var instance = new Stopwatch(name, element);
 	instances[instance_count] = instance;
 
 	element.attr('data-instance', instance_count);
@@ -418,14 +409,7 @@ $(document).on("click", ".stopwatch-link", function(e) {
 	clearTimeout(editTimeout);
 });
 
-// $(document).on("click touchstart", ".stopwatch-new", function(e) {
-// 	e.preventDefault();
 
-// 	// stop();
-// 	create_ins();
-// });
-
-var editingElement = null;
 $(document).on('mousedown', '.stopwatch-link', function(e) {
 	e.preventDefault();
 
@@ -440,14 +424,32 @@ $(document).on('mouseup mouseleave touchend', '.stopwatch-link', function(e) {
 	clearTimeout(editTimeout);
 });
 
+
+$(document).on('click', '.stopwatch-new', function (e) {
+	e.preventDefault();
+
+	create_ins();
+	updateChartDataset();
+});
+
 $(document).on("click", "#change_timer_name", function() {
-	if($('#timer_name_input').val() == "") {
+	var newName = $('#timer_name_input').val().trim();
+
+	if(newName === '') {
 		$('.timer_name_input_error').show();
 	}
 	else {
 		$('.timer_name_input_error').hide();
-		editingElement.find('.name').html( $('#timer_name_input').val() );
+
+		var instance_id = editingElement.attr('data-instance');
+		var instance = instances[instance_id];
+
+		editingElement.find('.name').html(newName);
+		instance.name = newName;
+
 		$('#editNameModel').modal('hide');
+
+		updateChartDataset();
 	}
 });
 
@@ -458,6 +460,8 @@ $(document).on("click", "#reset_timer_btn", function() {
 	editingElement.removeClass("green");
 	instance.reset();
 	$('#editNameModel').modal('hide');
+
+	updateChartDataset();
 });
 
 $(document).on('click', '#remove_timer_btn', function () {
@@ -470,13 +474,16 @@ $(document).on('click', '#remove_timer_btn', function () {
 
 	$(editingElement).remove();
 	$('#editNameModel').modal('hide');
+
+	updateChartDataset();
 });
 
 $("#doExport").click(function(e) {
+	e.preventDefault();
 	updateExportTable();
 	exportCSV( $('.export table') );
+	exportChart();
 	// window.open('data:application/vnd.ms-excel,' + encodeURIComponent($('.export').html()));
-	e.preventDefault();
 });
 
 $("#dorefresh").click(function(e) {
@@ -491,3 +498,5 @@ $('#refresh').click(function() {
 $('#help').click(function() {
 	$("#helpModel").modal();
 });
+
+

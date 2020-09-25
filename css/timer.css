@@ -168,8 +168,23 @@ align: center;
 }
 .download {
     bottom: 20px;
-    right: 20px;
+    right: 80px;
 }
 .close {
     color: #ffffff;
+}
+
+.draggable, .stopwatch a {
+  cursor: move;
+}
+
+.timers-chartjs-wrapper {
+  width: 500px;
+  display: inline-block;
+}
+
+@media (max-width: 768px) { 
+  .timers-chartjs-wrapper {
+    width: 300px;
+  }
 }
