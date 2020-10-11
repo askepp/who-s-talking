@@ -1,12 +1,11 @@
 var editTimeout = 0;
 var instances = {};
 var instance_count = 0;
-var timer_id = 0;
 var editingElement = null;
 var colorsPool = COLORS.slice(); // copy of COLORS
 
 
-var Stopwatch = function(name, elem, options) {
+var Stopwatch = function(elem, name, defaultClock, options) {
 	this.name = name;
 	this.color = colorsPool.shift();
 
@@ -29,7 +28,7 @@ var Stopwatch = function(name, elem, options) {
 	//elem.append(stopButton);
 	//elem.append(resetButton);
 	// initializ
-	reset();
+	reset(defaultClock);
 	
 	// private functions
 	function createElements() {
@@ -94,10 +93,10 @@ var Stopwatch = function(name, elem, options) {
 		// }
 	}
 
-	function reset() {
+	function reset(value) {
 		stop();
-		clock = 0;
-		render(0);
+		clock = value || 0;
+		render();
 	}
 
 	function update() {
@@ -201,6 +200,7 @@ var Stopwatch = function(name, elem, options) {
 		var oldValue = $('h1').html();
 		if (oldValue !== timer_str_total) {
 			$('h1').html(timer_str_total);
+			$('#share').attr('href', '?r=' + timersToURL(instances));
 		}
 	}
 
@@ -215,10 +215,7 @@ var Stopwatch = function(name, elem, options) {
 	this.stop = stop;
 	this.reset = reset;
 	this.get_clock = get_clock;
-	this.timer_id = timer_id;
 	this.elem = elem;
-
-	timer_id++;
 };
 
 function mapTwoDigits(number) {
@@ -306,15 +303,15 @@ function prepCSVRow(arr, columnCount, initial) {
   return initial + row;
 }
 
-function add_ins(element) {
-	var name = 'Timer ' + (instance_count + 1);
-	var instance = new Stopwatch(name, element);
+function add_ins(element, name, defaultClock) {
+	var name = name || ('Timer ' + (instance_count + 1));
+	var instance = new Stopwatch(element, name, defaultClock);
 	instances[instance_count] = instance;
 
 	element.attr('data-instance', instance_count);
 	instance_count++;
 
-	element.find('.name').html('Timer ' + instance_count);
+	element.find('.name').html(name);
 
 	$(element).css('background-color', instance.color);
 	$('.draggable').draggable({
@@ -326,13 +323,13 @@ function add_ins(element) {
 	});
 }
 
-function create_ins() {
-	var $sm = $('<div>')
+function create_ins(name, defaultClock) {
+	var elem = $('<div>')
 		.addClass('stopwatch basicx draggable')
 		.insertBefore('.stopwatch-new');
 
 	// ADD TO INSTANCES
-	add_ins($sm);
+	add_ins(elem, name, defaultClock);
 	// $sm.trigger('click');
 
 	// $('#timers').sortable('refresh')
@@ -363,8 +360,19 @@ function updateExportTable() {
 	$('.sl').html("<tr><th>Name</th><th>Time</th></tr>" + s);
 }
 
-$('.basic').each(function(i, element){
-	add_ins( $(this) );
+$(function() {
+	var url = new URL(window.location.href);
+	var encodedData = url.searchParams.get("r");
+	if (encodedData) {
+		var data = timersFromURL(encodedData);
+		data.forEach(function (item) {
+			console.log('Load', item.name, 'with', item.clock);
+			create_ins(item.name, item.clock);
+		})
+
+	} else {
+		create_ins();
+	}
 });
 
 
@@ -475,9 +483,10 @@ $("#doExport").click(function(e) {
 	// window.open('data:application/vnd.ms-excel,' + encodeURIComponent($('.export').html()));
 });
 
-$("#dorefresh").click(function(e) {
-	location.reload();
+$("#dorefresh").click(function() {
+	window.location.href =  window.location.href.split('?')[0];
 });
+
 
 $('#refresh').click(function() {
 	$("#refreshModel").modal();
@@ -487,5 +496,4 @@ $('#refresh').click(function() {
 $('#help').click(function() {
 	$("#helpModel").modal();
 });
-
 

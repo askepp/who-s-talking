@@ -33,14 +33,14 @@ body {
   padding: 0;
 }
 
------------
-
-a:hover { 
-  color: yellow;
+#refresh, #share {
+  color: #353535;
+  margin-left: 10px;
+  cursor: pointer;
 }
 
 .donate {
-align: center;
+  align: center;
 }
 
 .timer-container {
@@ -157,7 +157,6 @@ align: center;
 
 .action-btn {
     font-size: 36px;
-    cursor: pointer;
     position: fixed;
     z-index: 9;
 }
