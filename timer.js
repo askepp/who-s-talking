@@ -16,7 +16,7 @@ var Stopwatch = function(elem, name, defaultClock, options) {
 		stopButton = createButton("stop", stop),
 		resetButton = createButton("reset", reset),
 		offset,
-		clock,
+		clock = defaultClock || 0,
 		interval;
 	// default options
 	options = options || {};
@@ -152,7 +152,7 @@ var Stopwatch = function(elem, name, defaultClock, options) {
 
 		// TOTAL TIMER
 		var total_clock = 0;
-		$.each(instances, function(key, instance){
+		$.each(instances, function(key, instance) {
 			var timer_array = instance.elem.find('.timel').text().split(':');
 
 			var i_hours = 0;
@@ -216,6 +216,7 @@ var Stopwatch = function(elem, name, defaultClock, options) {
 	this.reset = reset;
 	this.get_clock = get_clock;
 	this.elem = elem;
+	this.render = render;
 };
 
 function mapTwoDigits(number) {
@@ -244,6 +245,8 @@ function add_ins(element, name, defaultClock) {
 			}
 	    }
 	});
+
+	return instance;
 }
 
 function create_ins(name, defaultClock) {
@@ -252,7 +255,7 @@ function create_ins(name, defaultClock) {
 		.insertBefore('.stopwatch-new');
 
 	// ADD TO INSTANCES
-	add_ins(elem, name, defaultClock);
+	var item = add_ins(elem, name, defaultClock);
 	// $sm.trigger('click');
 
 	// $('#timers').sortable('refresh')
@@ -261,6 +264,8 @@ function create_ins(name, defaultClock) {
 		$('.stopwatch-new').hide();
 		return;
 	}
+
+	return item;
 }
 
 
@@ -290,8 +295,9 @@ $(function() {
 		var data = timersFromURL(encodedData);
 		data.forEach(function (item) {
 			console.log('Load', item.name, 'with', item.clock);
-			create_ins(item.name, item.clock);
-		})
+			var item = create_ins(item.name, item.clock);
+			item.render(); // force re-render so total timer is updated
+		});
 
 	} else {
 		create_ins();
