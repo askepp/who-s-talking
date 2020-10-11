@@ -109,10 +109,13 @@ align: center;
 .stopwatch {
   background-color: #434343;
   color: #fff;
+  border: 5px solid transparent;
+  transition: border-color 150ms ease-in-out;
 }
-.stopwatch.hover-element, .stopwatch.green {
-  background-color: #6aa84f;
-  color: white !important;
+.stopwatch.hover-element, .stopwatch.active {
+  /*background-color: #6aa84f;
+  color: white !important;*/
+  border: 5px solid #FFF;
 }
 /*.stopwatch:active, .stopwatch:focus {
   background-color: #434343;

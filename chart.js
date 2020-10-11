@@ -30,18 +30,7 @@ var chartConfig = {
       {
         label: 'Project Timers',
         data: [], // will be updated
-        backgroundColor: [
-        	'rgb(219, 153, 90)',
-        	'rgb(101, 66, 54)',
-        	'rgb(214, 212, 160)',
-        	'rgb(218, 118, 53)',
-        	'rgb(226, 78, 27)',
-        	'rgb(31, 32, 65)',
-        	'rgb(17, 157, 164)',
-        	'rgb(75, 63, 114)',
-        	'rgb(25, 100, 126)',
-        	'rgb(144, 194, 144)',
-        ],
+        backgroundColor: [] // will be updated,
       }],
   },
 };
@@ -51,8 +40,19 @@ var chartConfig = {
  * Update chart dataset with current timer values.
  */
 function updateChartDataset() {
-	chartConfig.data.labels = Object.values(instances).map(function (t) { return t.name; });
-	chartConfig.data.datasets[0].data = Object.values(instances).map(function (t) { return t.get_clock(); });
+	var labels = [];
+	var data = [];
+	var colors = [];
+
+	Object.values(instances).map(function (t) {
+		labels.push(t.name);
+		data.push(t.get_clock());
+		colors.push(t.color);
+	});
+
+	chartConfig.data.labels = labels;
+	chartConfig.data.datasets[0].data = data;
+	chartConfig.data.datasets[0].backgroundColor = colors;
 	chart && chart.update();
 }
 

@@ -3,10 +3,12 @@ var instances = {};
 var instance_count = 0;
 var timer_id = 0;
 var editingElement = null;
+var colorsPool = COLORS.slice(); // copy of COLORS
 
 
 var Stopwatch = function(name, elem, options) {
 	this.name = name;
+	this.color = colorsPool.shift();
 
 	var timer = createTimer(),
 		nms = createname(),
@@ -314,6 +316,7 @@ function add_ins(element) {
 
 	element.find('.name').html('Timer ' + instance_count);
 
+	$(element).css('background-color', instance.color);
 	$('.draggable').draggable({
 		start: function(event, ui) {
 			if(editTimeout) {
@@ -364,26 +367,6 @@ $('.basic').each(function(i, element){
 	add_ins( $(this) );
 });
 
-$(function() {
-	// $( "#timers" ).sortable({
-	// 	items : '.stopwatch',
-	// 	// handle: '.move',
-	// 	start: function(event, ui) {
-	// 		if(editTimeout) {
-	// 			clearTimeout(editTimeout);
-	// 		}
-	//     }
-	// });
-	// $( "#timers" ).disableSelection();
-	// $( ".stopwatch" ).draggable({
-	// 	// handle: '.move',
-	// 	start: function(event, ui) {
-	// 		if(editTimeout) {
-	// 			clearTimeout(editTimeout);
-	// 		}
-	//     }
-	// });
-});
 
 $(document).on("click", ".stopwatch-link", function(e) {
 	e.preventDefault();
@@ -397,12 +380,12 @@ $(document).on("click", ".stopwatch-link", function(e) {
 	var instance_id = stopwatch_elem.attr('data-instance');
 	var instance = instances[instance_id];
 
-	if (stopwatch_elem.hasClass('green')) {
-		stopwatch_elem.removeClass("green");
+	if (stopwatch_elem.hasClass('active')) {
+		stopwatch_elem.removeClass("active");
 		instance.stop();
 	} else {
-		$('.stopwatch').removeClass("green");
-		stopwatch_elem.addClass("green");
+		$('.stopwatch').removeClass("active");
+		stopwatch_elem.addClass("active");
 		instance.start();
 	}
 
@@ -457,7 +440,7 @@ $(document).on("click", "#reset_timer_btn", function() {
 	var instance_id = editingElement.attr('data-instance');
 	var instance = instances[instance_id];
 
-	editingElement.removeClass("green");
+	editingElement.removeClass("active");
 	instance.reset();
 	$('#editNameModel').modal('hide');
 
@@ -466,7 +449,13 @@ $(document).on("click", "#reset_timer_btn", function() {
 
 $(document).on('click', '#remove_timer_btn', function () {
 	var instance_id = editingElement.attr('data-instance');
+	var instance = instances[instance_id];
+
+	// add background color back to the pool
+	colorsPool.push(instance.color);
+
 	delete instances[instance_id];
+	delete instance;
 	
 	if(Object.keys(instances).length < 10) {
 		$('.stopwatch-new').show();
