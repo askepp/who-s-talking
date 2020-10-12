@@ -115,7 +115,7 @@ body {
 .stopwatch.hover-element, .stopwatch.active {
   /*background-color: #6aa84f;
   color: white !important;*/
-  border: 5px solid #FFF;
+  border: 4px solid #FFF;
 }
 /*.stopwatch:active, .stopwatch:focus {
   background-color: #434343;
